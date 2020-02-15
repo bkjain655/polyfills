@@ -1,3 +1,5 @@
+const OBJECT = "[object Object]";
+const ARRAY = "[object Array]"
 class Clone {
     constructor(){}
 
@@ -18,12 +20,16 @@ class Clone {
     private arrayClone(original:any[]){
         let duplicate = [];
         original.forEach((el,index) => {
-            if(Array.isArray(el))
-                duplicate.push(this.arrayClone(el));
-            else if(toString.call(el) === "[object Object]"){
-                duplicate.push(this.objectClone(el));
-            } else {
-                duplicate.push(el);
+            let type:string = toString.call(el);
+            switch(type){
+                case OBJECT : 
+                    duplicate[index] = this.objectClone(el);    
+                    break;
+                case ARRAY:
+                    duplicate[index] = this.arrayClone(el);
+                    break;
+                default:
+                    duplicate[index] = el;
             }
         });
         return duplicate;
@@ -32,13 +38,16 @@ class Clone {
     private objectClone(original){
         let duplicate = {};
         for(let key in original){
-            let val = original[key];
-            if(Array.isArray(val)){
-                duplicate[key] = this.arrayClone(val);
-            } else if(toString.call(val) === "[object Object]"){
-                duplicate[key] = this.objectClone(val);
-            } else {
-                duplicate[key] = val;
+            let val = original[key],type:string = toString.call(val);
+            switch(type){
+                case OBJECT : 
+                    duplicate[key] = this.objectClone(val);
+                    break;
+                case ARRAY:
+                    duplicate[key] = this.arrayClone(val);
+                    break;
+                default:
+                    duplicate[key] = val;
             }
         }
         return duplicate;
